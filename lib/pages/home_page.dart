@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:learning_project/models/catalog.dart';
 import 'package:learning_project/widgets/drawer.dart';
-import '../widgets/item_widget.dart';
+// import '../widgets/item_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -22,7 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   _loadData() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final catalogJson = await rootBundle.loadString("assets/files/catalog.json");
+    final catalogJson =
+        await rootBundle.loadString("assets/files/catalog.json");
     final decodedData = jsonDecode(catalogJson);
     final products = decodedData['products'];
 
@@ -31,12 +31,10 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {});
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Learning App"),
@@ -44,14 +42,40 @@ class _HomePageState extends State<HomePage> {
       body: Material(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: (CatalogModel.items.isNotEmpty) ? ListView.builder(
-            itemCount: CatalogModel.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ItemWidget(item: CatalogModel.items[index]);
-            },
-          ) : const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: (CatalogModel.items.isNotEmpty)
+              ? Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    itemBuilder: (context, index) {
+                      final item = CatalogModel.items[index];
+                      return GridTile(
+                        header: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              color: Colors.deepPurple,
+                            ),
+                            child: Text(
+                              item.name,
+                              style: const TextStyle(color: Colors.white),
+                            )),
+                        child: Image.network(item.image),
+                        footer: Container(
+                            padding: const EdgeInsets.all(10),
+                            color: Colors.black,
+                            child: Text("${item.price}",
+                                style: const TextStyle(color: Colors.white))),
+                      );
+                    },
+                    itemCount: CatalogModel.items.length,
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
         ),
       ),
       drawer: const MyDrawer(),
