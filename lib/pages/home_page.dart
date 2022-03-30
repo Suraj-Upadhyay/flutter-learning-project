@@ -2,7 +2,7 @@ import 'dart:convert';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:learning_project/models/catalog.dart';
-import 'package:learning_project/widgets/drawer.dart';
+import 'package:learning_project/widgets/my_themes.dart';
 import '../widgets/item_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -22,7 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   _loadData() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final catalogJson = await rootBundle.loadString("assets/files/catalog.json");
+    final catalogJson =
+        await rootBundle.loadString("assets/files/catalog.json");
     final decodedData = jsonDecode(catalogJson);
     final products = decodedData['products'];
 
@@ -31,30 +31,46 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {});
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Learning App"),
-      ),
-      body: Material(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: (CatalogModel.items.isNotEmpty) ? ListView.builder(
-            itemCount: CatalogModel.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ItemWidget(item: CatalogModel.items[index]);
-            },
-          ) : const Center(
-            child: CircularProgressIndicator(),
+      backgroundColor: MyThemes.creamColor,
+      body: Padding(
+        padding:
+            const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+        child: SafeArea(
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Catalog App",
+                  style: TextStyle(
+                      color: MyThemes.darkBlueColor, fontWeight: FontWeight.bold),
+                  textScaleFactor: 3,
+                ),
+                const Text(
+                  "Trending Products",
+                  textScaleFactor: 1.5,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: CatalogModel.items.length,
+                      itemBuilder: (context, index) {
+                        return ItemWidget(item: CatalogModel.items[index]);
+                      }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      drawer: const MyDrawer(),
     );
   }
 }
