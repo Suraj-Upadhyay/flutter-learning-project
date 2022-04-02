@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _loadData() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1000));
     final catalogJson =
         await rootBundle.loadString("assets/files/catalog.json");
     final decodedData = jsonDecode(catalogJson);
@@ -41,36 +41,56 @@ class _HomePageState extends State<HomePage> {
         padding:
             const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
         child: SafeArea(
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Catalog App",
-                  style: TextStyle(
-                      color: MyThemes.darkBlueColor, fontWeight: FontWeight.bold),
-                  textScaleFactor: 3,
-                ),
-                const Text(
-                  "Trending Products",
-                  textScaleFactor: 1.5,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: CatalogModel.items.length,
-                      itemBuilder: (context, index) {
-                        return ItemWidget(item: CatalogModel.items[index]);
-                      }),
-                ),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              CatalogHeader(),
+              SizedBox(
+                height: 20,
+              ),
+              Catalog(),
+            ],
           ),
         ),
       ),
     );
+  }
+}
+
+class CatalogHeader extends StatelessWidget {
+  const CatalogHeader({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        "Catalog App",
+        style: TextStyle(
+            color: MyThemes.darkBlueColor, fontWeight: FontWeight.bold),
+        textScaleFactor: 3,
+      ),
+      const Text(
+        "Trending Products",
+        textScaleFactor: 1.5,
+      )
+    ]);
+  }
+}
+
+class Catalog extends StatelessWidget {
+  const Catalog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CatalogModel.items.isNotEmpty
+        ? Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: CatalogModel.items.length,
+                itemBuilder: (context, index) {
+                  return ItemWidget(item: CatalogModel.items[index]);
+                }),
+          )
+        : const Expanded(child: Center(child: CircularProgressIndicator()));
   }
 }
